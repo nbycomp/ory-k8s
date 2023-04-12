@@ -140,3 +140,7 @@ baseUrl: ""
 jwksUrl: "http://oathkeeper-api"
 
 projectName: "SecureApp"
+
+busybox:
+  repository: busybox
+  tag: 1

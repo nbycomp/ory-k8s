@@ -167,7 +167,7 @@ hydra:
     # -- resource requests and limits for the automigration initcontainer
     resources: {}
 
-  # -- Enable dev mode, not secure in production environments 
+  # -- Enable dev mode, not secure in production environments
   dev: false
 
 deployment:
@@ -232,7 +232,7 @@ deployment:
     # -- Array of extra envs to be passed to the initContainer. Kubernetes format is expected
     # - name: FOO
     #   value: BAR
-    extraEnv: []    
+    extraEnv: []
 
   # -- Configure node tolerations.
   tolerations: []
@@ -334,11 +334,11 @@ deployment:
   #  - name: ...
   #    image: ...
 
-  # -- Configure a custom livenessProbe. This overwrites the default object 
-  customLivenessProbe: {} 
-  # -- Configure a custom readinessProbe. This overwrites the default object  
+  # -- Configure a custom livenessProbe. This overwrites the default object
+  customLivenessProbe: {}
+  # -- Configure a custom readinessProbe. This overwrites the default object
   customReadinessProbe: {}
-  # -- Configure a custom startupProbe. This overwrites the default object  
+  # -- Configure a custom startupProbe. This overwrites the default object
   customStartupProbe: {}
 
 # -- Values for initialization job
@@ -561,3 +561,7 @@ serviceMonitor:
 configmap:
   # -- switch to false to prevent checksum annotations being maintained and propogated to the pods
   hashSumEnabled: true
+
+busybox:
+  repository: busybox
+  tag: 1

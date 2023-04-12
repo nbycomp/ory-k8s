@@ -372,3 +372,7 @@ serviceMonitor:
 configmap:
   # -- switch to false to prevent checksum annotations being maintained and propogated to the pods
   hashSumEnabled: true
+
+busybox:
+  repository: busybox
+  tag: 1
