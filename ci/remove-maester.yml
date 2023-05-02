@@ -1,0 +1,46 @@
+# Remove "maester" dependency from Chart, as it contains a CRD.
+# CRDs are not permitted by the Red Hat chart validation tool
+---
+platform: linux
+image_resource:
+  type: registry-image
+  source:
+    repository: alpine/helm
+    tag: 3.11.3
+
+inputs:
+  - name: repo
+
+outputs:
+  - name: updated-repo
+
+params:
+  CHART_DIR:
+
+run:
+  path: sh
+  args:
+    - -c
+    - |
+      apk add --no-cache --no-progress yq || exit 1
+      git clone repo updated-repo || exit 1
+
+      cd updated-repo/${CHART_DIR:?CHART_DIR param must be set}
+
+      yq_cmd='.name += "-maesterless" |
+        .dependencies |= map(select(.name | test("maester$") | not))'
+
+      printf 'testing yq command\n' >&2
+      if ! yq -e "$yq_cmd" Chart.yaml; then
+        printf 'yq command failed: exiting\n' >&2
+        exit 1
+      fi
+
+      printf 'modifying Chart.yaml in place\n' >&2
+      yq -i "$yq_cmd" Chart.yaml
+
+      printf 'updating dependencies\n' >&2
+      helm dependency update
+
+      printf 'removing existing charts\n' >&2
+      rm -f charts/*-maester-*.tgz
