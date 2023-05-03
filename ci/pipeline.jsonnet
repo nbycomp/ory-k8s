@@ -1,5 +1,6 @@
 local job = import 'job.libsonnet';
 local resource = import 'resource.libsonnet';
+local resource_type = import 'resource_type.libsonnet';
 
 local repo_source = 'git@github.com:nbycomp/k8s.git';
 local username = 'robot$concourse';
@@ -25,14 +26,7 @@ local components = [
 
 {
   resource_types: [
-    {
-      name: 'chartmuseum',
-      type: 'registry-image',
-      source: {
-        repository: 'cathive/concourse-chartmuseum-resource',
-        tag: 'v1.0.0',
-      },
-    },
+    resource_type.chartmuseum,
     {
       name: 'git',
       type: 'registry-image',
