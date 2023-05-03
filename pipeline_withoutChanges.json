@@ -1,0 +1,254 @@
+{
+   "jobs": [
+      {
+         "name": "update-pipeline",
+         "plan": [
+            {
+               "in_parallel": [
+                  {
+                     "get": "repo",
+                     "resource": "repo-pipeline",
+                     "trigger": true
+                  },
+                  {
+                     "get": "ci-tasks",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "ci-tasks/jsonnet-pipeline.yml",
+               "params": { },
+               "task": "jsonnet-pipeline"
+            },
+            {
+               "file": "pipeline/pipeline.json",
+               "set_pipeline": "self"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "hydra-maesterless",
+         "plan": [
+            {
+               "in_parallel": [
+                  {
+                     "get": "task-repo"
+                  },
+                  {
+                     "get": "repo",
+                     "resource": "release-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "task-repo/ci/remove-maester.yml",
+               "params": {
+                  "CHART_DIR": "helm/charts/hydra"
+               },
+               "task": "remove-maester"
+            },
+            {
+               "params": {
+                  "chart": "updated-repo/helm/charts/hydra/"
+               },
+               "put": "hydra"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "oathkeeper-maesterless",
+         "plan": [
+            {
+               "in_parallel": [
+                  {
+                     "get": "task-repo"
+                  },
+                  {
+                     "get": "repo",
+                     "resource": "release-repo",
+                     "trigger": true
+                  }
+               ]
+            },
+            {
+               "file": "task-repo/ci/remove-maester.yml",
+               "params": {
+                  "CHART_DIR": "helm/charts/oathkeeper"
+               },
+               "task": "remove-maester"
+            },
+            {
+               "params": {
+                  "chart": "updated-repo/helm/charts/oathkeeper/"
+               },
+               "put": "oathkeeper"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "keto",
+         "plan": [
+            {
+               "get": "repo",
+               "resource": "release-repo",
+               "trigger": true
+            },
+            {
+               "params": {
+                  "chart": "repo/helm/charts/keto/"
+               },
+               "put": "keto"
+            }
+         ],
+         "public": true,
+         "serial": true
+      },
+      {
+         "name": "kratos",
+         "plan": [
+            {
+               "get": "repo",
+               "resource": "release-repo",
+               "trigger": true
+            },
+            {
+               "params": {
+                  "chart": "repo/helm/charts/kratos/"
+               },
+               "put": "kratos"
+            }
+         ],
+         "public": true,
+         "serial": true
+      }
+   ],
+   "resource_types": [
+      {
+         "name": "chartmuseum",
+         "source": {
+            "repository": "cathive/concourse-chartmuseum-resource",
+            "tag": "v1.0.0"
+         },
+         "type": "registry-image"
+      },
+      {
+         "name": "git",
+         "source": {
+            "repository": "concourse/git-resource",
+            "tag": "1.14"
+         },
+         "type": "registry-image"
+      }
+   ],
+   "resources": [
+      {
+         "icon": "git",
+         "name": "repo-pipeline",
+         "source": {
+            "branch": "ci",
+            "paths": [
+               "ci/pipeline.jsonnet"
+            ],
+            "private_key": "((botnbycomp_private_key))",
+            "uri": "git@github.com:nbycomp/k8s.git"
+         },
+         "type": "git",
+         "webhook_token": "((github_webhook))"
+      },
+      {
+         "icon": "git",
+         "name": "ci-tasks",
+         "source": {
+            "branch": "master",
+            "private_key": "((botnbycomp_private_key))",
+            "uri": "git@github.com:nbycomp/ci-tasks.git"
+         },
+         "type": "git",
+         "webhook_token": "((github_webhook))"
+      },
+      {
+         "icon": "git",
+         "name": "task-repo",
+         "source": {
+            "branch": "ci",
+            "private_key": "((botnbycomp_private_key))",
+            "uri": "git@github.com:nbycomp/k8s.git"
+         },
+         "type": "git",
+         "webhook_token": "((github_webhook))"
+      },
+      {
+         "icon": "git",
+         "name": "release-repo",
+         "source": {
+            "branch": "master",
+            "commit_filter": {
+               "include": [
+                  "^Release v[0-9]\\+\\.[0-9]\\+\\.[0-9]\\+"
+               ]
+            },
+            "disable_ci_skip": true,
+            "private_key": "((botnbycomp_private_key))",
+            "uri": "git@github.com:nbycomp/k8s.git"
+         },
+         "type": "git",
+         "webhook_token": "((github_webhook))"
+      },
+      {
+         "icon": "bank",
+         "name": "hydra",
+         "source": {
+            "basic_auth_password": "((registry-password))",
+            "basic_auth_username": "robot$concourse",
+            "chart_name": "hydra-maesterless",
+            "harbor_api": true,
+            "server_url": "https://registry.nearbycomputing.com/api/chartrepo/public/charts"
+         },
+         "type": "chartmuseum"
+      },
+      {
+         "icon": "bank",
+         "name": "keto",
+         "source": {
+            "basic_auth_password": "((registry-password))",
+            "basic_auth_username": "robot$concourse",
+            "chart_name": "keto",
+            "harbor_api": true,
+            "server_url": "https://registry.nearbycomputing.com/api/chartrepo/public/charts"
+         },
+         "type": "chartmuseum"
+      },
+      {
+         "icon": "bank",
+         "name": "kratos",
+         "source": {
+            "basic_auth_password": "((registry-password))",
+            "basic_auth_username": "robot$concourse",
+            "chart_name": "kratos",
+            "harbor_api": true,
+            "server_url": "https://registry.nearbycomputing.com/api/chartrepo/public/charts"
+         },
+         "type": "chartmuseum"
+      },
+      {
+         "icon": "bank",
+         "name": "oathkeeper",
+         "source": {
+            "basic_auth_password": "((registry-password))",
+            "basic_auth_username": "robot$concourse",
+            "chart_name": "oathkeeper-maesterless",
+            "harbor_api": true,
+            "server_url": "https://registry.nearbycomputing.com/api/chartrepo/public/charts"
+         },
+         "type": "chartmuseum"
+      }
+   ]
+}
