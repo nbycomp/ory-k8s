@@ -8,6 +8,10 @@ on:
 
 jobs:
   validate:
+    # paths-filter lists a pull request's files through the API.
+    permissions:
+      contents: read
+      pull-requests: read
     name: Validate GHA
     timeout-minutes: 5
     runs-on: ubuntu-latest
