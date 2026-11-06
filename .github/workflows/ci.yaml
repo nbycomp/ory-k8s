@@ -18,8 +18,8 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
-      - uses: actions/setup-go@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6
         with:
           go-version: "1.26"
       - name: Setup dependencies
@@ -35,8 +35,8 @@ jobs:
       cicd-scripts-changed: ${{ steps.filter.outputs.cicd-scripts }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
-      - uses: dorny/paths-filter@v4
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4
         id: filter
         with:
           base: master
@@ -113,14 +113,14 @@ jobs:
       HELM_CHART: ${{ matrix.chart }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Checkout dependencies
         uses: ./.github/actions/deps-setup
       - name: Lint helm chart
         run: make helm-lint
       - name: Validate helm chart
         run: make helm-validate
-      - uses: kubescape/github-action@main
+      - uses: kubescape/github-action@0e5b202e9e3d32623bb0449eb90220b06f583f49 # main
         with:
           format: json
           outputFile: results
@@ -146,7 +146,7 @@ jobs:
       HELM_CHART: ${{ matrix.chart }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Checkout dependencies
         uses: ./.github/actions/deps-setup
       - name: Test upgrade for helm chart
@@ -166,7 +166,7 @@ jobs:
       HELM_CHART: ${{ matrix.chart }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Checkout dependencies
         uses: ./.github/actions/deps-setup
       - name: Test install for helm chart
@@ -182,7 +182,7 @@ jobs:
       HELM_DOCS_VERSION: "1.11.0"
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           token: ${{ secrets.ORY_BOT_PAT }}
       - name: Checkout dependencies
@@ -207,7 +207,7 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           token: ${{ secrets.ORY_BOT_PAT }}
       - name: Checkout dependencies
@@ -238,9 +238,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: actionlint
         id: actionlint
-        uses: raven-actions/actionlint@v2
+        uses: raven-actions/actionlint@3d39aea434753780c3b3d4a1a31c854b4dbf49d7 # v2
         with:
           fail-on-error: true

@@ -16,9 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - name: Synchronize Issue Labels
-        uses: ory/label-sync-action@v0
+        uses: ory/label-sync-action@f080c2b8ac988f2fc90ddbbc8749c6ee55477f21 # v0
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           dry: false
